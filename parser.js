@@ -1,7 +1,9 @@
 const fs = require("fs");
 const pdf = require("pdf-parse");
 
-let dataBuffer = fs.readFileSync("./uploads/7.pdf");
+let dataBuffer = fs.readFileSync("./uploads/1.pdf");
+
+//accepted formats are +971 or 00971 or (00971) or any other country code, otherwise it will be rejected!
 
 pdf(dataBuffer).then(function (data) {
 	// number of pages
@@ -28,7 +30,7 @@ pdf(dataBuffer).then(function (data) {
    
      //=============================================name===================================
     var name = words[0]
-    console.log(name);
+    console.log("Extracted name: ",name);
     //=========================================================email=================================
     // Regular expression to match email addresses
 const emailRegex = /[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}/;
@@ -47,12 +49,33 @@ function extractEmailsFromArray(array) {
   return extractedEmails;
 }
 
-    // Get the extracted emails
-    const extractedEmails = extractEmailsFromArray(words);
-
-    // Output the result
-    console.log("Extracted Emails:", extractedEmails);
+ 
    
+//=====================================phone=============================
 
-    
+  function extractPhoneNumbers(array) { 
+    // Define a regular expression for matching phone numbers
+    const phoneRegex = /(\+([\d\s\-]*))|((\(\d*\))([\d\s\-]*))|(00([\d\s\-]*))/;
+    const extractedPhoneNumbers = [];
+
+    array.forEach((str) => {
+      const matches = str.match(phoneRegex);
+      if (matches && matches[0].length > 5) {
+        extractedPhoneNumbers.push(matches[0].trim());
+      }
+    });
+    return extractedPhoneNumbers;
+  }
+
+  // Example usage:
+  const extractedPhoneNumbers = extractPhoneNumbers(words);
+
+  console.log("Extracted phonenumber: ",extractedPhoneNumbers);
+
+  // Get the extracted emails
+  const extractedEmails = extractEmailsFromArray(words);
+
+  // Output the result
+  console.log("Extracted Emails: ", extractedEmails);
 });
+
