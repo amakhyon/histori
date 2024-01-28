@@ -24,6 +24,7 @@
   },
   "homepage": "https://github.com/amakhyon/historia#readme",
   "dependencies": {
+    "compromise": "^14.11.2",
     "easy-resume-parser": "^1.0.1",
     "express": "^4.18.2",
     "formidable": "^3.5.1",
