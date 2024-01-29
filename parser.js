@@ -1,18 +1,28 @@
 const fs = require("fs");
 const pdf = require("pdf-parse");
 const nlp = require('compromise');
-
-
-var CVIndex = 0;
-for (var i=1; i < 55; i++){
+var path = require('path')
+var textract = require('textract');
 
 
 
-let dataBuffer = fs.readFileSync("./uploads/"+ i + ".pdf");
+// Specify the directory path
+const directoryPath = './uploads';
+
+// Read the contents of the directory
+fs.readdir(directoryPath, (err, files) => {
+  if (err) {
+    console.error('Error reading directory:', err);
+    return;
+  }
+  files.forEach(file => {
+    if (path.extname(file) == ".pdf") {
+let dataBuffer = fs.readFileSync(directoryPath + "/" + file);
 
 //accepted formats are +971 or 00971 or (00971) or any other country code, otherwise it will be rejected!
-pdf(dataBuffer).then(function (data) {
 
+pdf(dataBuffer).then(function (data) {
+  console.log(data);
 	// number of pages
 
 	// console.log(data.numpages);
@@ -171,7 +181,9 @@ function findEmail(){
   
 }
 
-  console.log("               ----------- parsing CV " + CVIndex++ + "-----------");
+
+function displayData(){
+  console.log("               ----------- parsing CV " + file + "-----------");
 
 
   console.log("Found names:", findName());
@@ -186,10 +198,120 @@ function findEmail(){
 
   console.log("============================================================")
 
+}
+
+// displayData();
 
 });
 
+    } else if(path.extname(file) == ".docx" || path.extname(file) == ".txt" ){
 
-}//loop to loop all documents
+      const filePath = directoryPath + "/" + file;
+
+      textract.fromFileWithPath(filePath, function( error, text ) {
+        
+        console.log(text);
+
+
+        const doc = nlp(text);
+        const phones = doc.phoneNumbers().out('array');
+        const emails = doc.emails().out('array');
+        const places = doc.places().out('array');
+        const country = doc.match('#place #country').json();
+        const links = doc.urls().out('array');
+        const organizations = doc.organizations().out('array');
+        const nouns = doc.nouns().out('array');
+        
+        function findJob(){
+          let jobs = doc.match('#Actor #Singular').json();
+          try{
+            return jobs[0].text;
+          } catch(err) {
+        
+          }
+        }
+        
+        function findCountry(){
+          const country = doc.match('#place #country').json();
+          try{
+            return country[0].text;
+          } catch(err) {
+        
+          }
+        }
+        function findName(){
+          const names = doc.people().out('array');
+          try{
+            if (names[0]){
+              return names[0];
+            } else { 
+              return extractNamesFromArray(words);
+            }
+          } catch (err) {
+          }
+          
+        }
+        
+        function findPhone(){
+          const phones = doc.phoneNumbers().out('array');
+          try{
+            if (phones[0]){
+              return phones[0];
+            } else {
+              return extractPhoneNumbers(words)[0];
+            }
+          } catch (err) {
+        
+            }
+          
+          
+        }
+        function findEmail(){
+          const emails = doc.emails().out('array');
+        
+          try{
+            if (emails[0]){
+              return emails[0];
+            } else {
+              return extractEmailsFromArray(words)[0];
+            }
+          } catch (err) {
+        
+            }
+          
+          
+        }
+  let companies = doc.match('#Organization #Company').json();
+
+
+        function displayData(){
+          console.log("               ----------- parsing CV " + file + "-----------");
+        
+        
+          console.log("Found names:", findName());
+          console.log("Found phones:", findPhone());
+          console.log("Found emails:", findEmail());
+          console.log("Found links:", links);
+          // console.log("Found organizations:", organizations);
+          // console.log("Found nouns:", nouns);
+          console.log("found job: ", findJob());
+          console.log("Found country: ",findCountry());
+          console.log("company: ", companies);
+        
+          console.log("============================================================")
+        
+        }
+        
+
+        displayData();
+      }) //end of parsing docx & txt files
+
+    
+    
+    
+    }
+
+});
+});//loop to loop all documents
 
 
