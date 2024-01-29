@@ -4,7 +4,7 @@ const nlp = require('compromise');
 
 
 var CVIndex = 0;
-for (var i=1; i < 15; i++){
+for (var i=1; i < 55; i++){
 
 
 
@@ -94,30 +94,95 @@ function extractEmailsFromArray(array) {
   const extractedEmails = extractEmailsFromArray(words);
 
   const doc = nlp(AllResume);
-  const names = doc.people().out('array');
   const phones = doc.phoneNumbers().out('array');
   const emails = doc.emails().out('array');
   const places = doc.places().out('array');
+  const country = doc.match('#place #country').json();
   const links = doc.urls().out('array');
   const organizations = doc.organizations().out('array');
+  const nouns = doc.nouns().out('array');
+  
+
+  //play with compromise
+  let jobs = doc.match('#Actor #Singular').json();
+  let companies = doc.match('#Organization #Company').json();
+  //useful links 
+  // https://www.npmjs.com/package/compromise
+  //https://observablehq.com/@spencermountain/nouns
 
 
+function findJob(){
+  let jobs = doc.match('#Actor #Singular').json();
+  try{
+    return jobs[0].text;
+  } catch(err) {
 
+  }
+}
+
+function findCountry(){
+  const country = doc.match('#place #country').json();
+  try{
+    return country[0].text;
+  } catch(err) {
+
+  }
+}
+function findName(){
+  const names = doc.people().out('array');
+  try{
+    if (names[0]){
+      return names[0];
+    } else { 
+      return extractNamesFromArray(words);
+    }
+  } catch (err) {
+  }
+  
+}
+
+function findPhone(){
+  const phones = doc.phoneNumbers().out('array');
+  try{
+    if (phones[0]){
+      return phones[0];
+    } else {
+      return extractPhoneNumbers(words)[0];
+    }
+  } catch (err) {
+
+    }
+  
+  
+}
+function findEmail(){
+  const emails = doc.emails().out('array');
+
+  try{
+    if (emails[0]){
+      return emails[0];
+    } else {
+      return extractEmailsFromArray(words)[0];
+    }
+  } catch (err) {
+
+    }
+  
+  
+}
 
   console.log("               ----------- parsing CV " + CVIndex++ + "-----------");
 
-  console.log("Extracted Name: ", extractedName);
-  console.log("Extracted phonenumber: ",extractedPhoneNumbers);
-  console.log("Extracted Emails: ", extractedEmails);
 
-
-
-  console.log("Found names:", names);
-  console.log("Found phones:", phones);
-  console.log("Found emails:", emails);
-  console.log("Found places:", places);
+  console.log("Found names:", findName());
+  console.log("Found phones:", findPhone());
+  console.log("Found emails:", findEmail());
   console.log("Found links:", links);
-  console.log("Found organizations:", organizations);
+  // console.log("Found organizations:", organizations);
+  // console.log("Found nouns:", nouns);
+  console.log("found job: ", findJob());
+  console.log("Found country: ",findCountry());
+  console.log("company: ", companies);
 
   console.log("============================================================")
 
