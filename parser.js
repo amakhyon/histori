@@ -3,7 +3,7 @@ const pdf = require("pdf-parse");
 const nlp = require('compromise');
 var path = require('path')
 var textract = require('textract');
-const { extractEmailsFromArray, extractNamesFromArray, extractPhoneNumbers, findCountry,findEmail,findJob,findName,findPhone, findLinks, findCompanies } = require("./parsing_functions");
+const { extractEmailsFromArray, extractNamesFromArray, extractPhoneNumbers, findCountry,findEmail,findJob,findName,findPhone, findLinks, findCompanies,searchForKeyword, searchForKeywordzz } = require("./parsing_functions");
 var candidatez = require("./candidates");
 
 
@@ -39,8 +39,11 @@ pdf(dataBuffer).then(function (data) {
   //https://observablehq.com/@spencermountain/nouns
 
 
-
-
+  
+  if(searchForKeyword(words,"teacher")) {
+    console.log(file);
+  }
+  console.log(searchForKeywordzz(words,['teacher','math','fullstack','flutter']));
 
 let candidate =
 {

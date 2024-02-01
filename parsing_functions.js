@@ -16,7 +16,7 @@ function extractEmailsFromArray(array) {
   const extractedEmails = [];
 
   array.forEach((str) => {
-    const matches = str.match(emailRegex);
+    
     if (matches) {
       extractedEmails.push(matches[0]);
     }
@@ -25,7 +25,40 @@ function extractEmailsFromArray(array) {
   return extractedEmails;
 }
 
- 
+//=====================search for keyword====================
+function searchForKeyword(array,word){
+  var found = false;
+  array.forEach((str) => {
+    
+    if(str.includes(word) ){
+      found = true;
+    }
+  });
+  return found;
+}
+
+
+//================search for keywordsssssssss=======================
+
+function searchForKeywordzz(resumeWords,queryWords){
+  var querySuccess = {};
+  queryWords.forEach((queryWord) => { //fill up the object with false
+    querySuccess[queryWord] = false;
+  });
+
+  resumeWords.forEach((resumeWord) => {
+    queryWords.forEach((queryWord) => {
+      if(resumeWord.includes(queryWord) ){
+        querySuccess[queryWord] = true;
+      }
+    });
+
+  });
+  return querySuccess;
+}
+
+
+//==============================
    
 //=====================================phone=============================
 
@@ -120,5 +153,5 @@ function extractEmailsFromArray(array) {
   }
   
   module.exports =  {
-    extractEmailsFromArray, extractNamesFromArray, extractPhoneNumbers, findCountry,findEmail,findJob,findName,findPhone, findLinks, findJob, findCompanies
+    extractEmailsFromArray, extractNamesFromArray, extractPhoneNumbers, findCountry,findEmail,findJob,findName,findPhone, findLinks, findJob, findCompanies,searchForKeyword,searchForKeywordzz
   }
